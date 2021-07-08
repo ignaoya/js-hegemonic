@@ -16,15 +16,34 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
 						password text,
 						CONSTRAINT email_unique UNIQUE (email)
 						)`,
-				(err) => {
-					if (err) {
-						console.log('Error creating table');
-						// table already created
-					} else {
-						let insert = 'INSERT INTO user (name, email, password) VALUES (?,?,?)'
-						db.run(insert, ["admin", "admin@admin.com", md5("admin123")])
-					}
-				});
+			(err) => {
+				if (err) {
+					console.log("'User' table already created.");
+					// table already created
+				} else {
+					console.log("Created 'User' table.");
+					const insert = 'INSERT INTO user (name, email, password) VALUES (?,?,?)';
+					db.run(insert, ["admin", "admin@admin.com", md5("admin123")]);
+				}
+			}
+		);
+		db.run(`CREATE TABLE nation (
+						id INTEGER PRIMARY KEY AUTOINCREMENT,
+						user_id INTEGER REFERENCES user(id),
+						name text,
+						population INTEGER,
+						president_id INTEGER REFERENCES citizen(id),
+						monetary_reserves INTEGER,
+						oil_reserves INTEGER
+						)`,
+			(err) => {
+				if (err) {
+					console.log("'Nation' table already created.");
+				} else {
+					console.log("Created 'Nation' table.");
+				}
+			}
+		);
 	}
 });
 
