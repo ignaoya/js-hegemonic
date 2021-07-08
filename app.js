@@ -13,25 +13,8 @@ app.use(express.json());
 app.use('/', indexRouter);
 app.use('/api', apiRouter);
 
-/*
-app.get('/api/users', (req, res) => {
-	const sql = "select * from user";
-	let params = [];
-	db.all(sql, params, (err, rows) => {
-		if (err) {
-			res.status(400).json({"error": err.message});
-			return;
-		}
-		res.json({
-			"message": "success",
-			"data": rows
-		})
-	});
-});
-*/
-
 app.use((req, res) => {
-	res.status(404);
+	res.status(404).send('404: page not found!');
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
