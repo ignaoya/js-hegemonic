@@ -160,4 +160,82 @@ router.delete('/nations/:id', (req, res) => {
 	res.json({ "message": "Success!" });
 });
 
+router.get('/citizens', (req, res) => {
+	const sql = "select * from citizen";
+	let params = [];
+	db.all(sql, params, (err, rows) => {
+		if (err) {
+			res.status(400).json({"error": err.message});
+			return;
+		}
+		res.json({
+			"message": "success",
+			"data": rows
+		})
+	});
+});
+
+router.post('/citizens', (req, res) => {
+	let sql = "SELECT * FROM citizen WHERE nation_id = ?";
+	db.all(sql, [req.body.nation_id], (err, rows) => {
+		if (err) {
+			console.log("Err is true");
+			res.status(400).send({"error": err.message});
+			return;
+		} else if (rows.length == 0) {
+			console.log(rows);
+			res.send({ "message": "There is no nation with that id!" });
+			return;
+		} else {
+			sql = "INSERT INTO citizen (nation_id, name, ideology, votes, taxes, oil_cost) VALUES (?,?,?,?,?,?)";
+			const params = [req.body.nation_id, req.body.name, req.body.ideology, 
+											req.body.votes, req.body.taxes, req.body.oil_cost];
+			db.run(sql, params);
+			res.send({ "message": "success" });
+		}
+	});
+});
+
+router.get('/citizens/:id', (req, res) => {
+	let sql = "SELECT * FROM citizen WHERE id = ?";
+	db.all(sql, [req.params.id], (err, rows) => {
+		if (err) {
+			res.status(400).send({"error": err.message});
+			return;
+		} else if (rows.length > 0) {
+			res.json({ "citizen": rows });
+			return;
+		} else {
+			res.json({ "message": "Citizen not found!" });
+			return;
+		}
+	});
+});
+
+router.put('/citizens/:id', (req, res) => {
+	let sql = "SELECT * FROM citizen WHERE id = ?";
+	const params = [req.body.name, req.params.id];
+	db.all(sql, [req.params.id], (err, rows) => {
+		if (err) {
+			res.status(400).send({"error": err.message});
+			return;
+		} else if (rows.length > 0) {
+			sql = "UPDATE citizen SET name = ? WHERE id = ?";
+			db.run(sql, params);
+			res.json({ "message": "Success!" });
+			return;
+		} else {
+			res.json({ "message": "Citizen not found!" });
+			return;
+		}
+	});
+});
+
+router.delete('/citizens/:id', (req, res) => {
+	let sql = "DELETE FROM citizen WHERE id = ?";
+	const params = [req.params.id];
+	db.run(sql, params);
+	res.json({ "message": "Success!" });
+});
+
 module.exports = router;
