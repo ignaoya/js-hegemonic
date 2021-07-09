@@ -44,6 +44,23 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
 				}
 			}
 		);
+		db.run(`CREATE TABLE citizen (
+						id INTEGER PRIMARY KEY AUTOINCREMENT,
+						nation_id INTEGER REFERENCES nation(id),
+						name text,
+						ideology text,
+						votes INTEGER,
+						taxes INTEGER,
+						oil_cost INTEGER
+						)`,
+			(err) => {
+				if (err) {
+					console.log("'Citizen' table already created.");
+				} else {
+					console.log("Created 'Citizen' table.");
+				}
+			}
+		);
 	}
 });
 
